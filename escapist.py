@@ -52,35 +52,35 @@ class Escapist:
 
     def next_move(self):
         next_move = 0 
-        print(self.actual_position)
+        # print(self.actual_position)
         
         if np.random.rand() < self.chaos_degree:
             direction = np.random.choice(self.directions)
             next_position = self.get_position_from_direction(direction, self.actual_position)
-            print("next_position: ", next_position)
+            # print("next_position: ", next_position)
             if self.game.check_possible_move(self.actual_position, next_position):
                 return next_position
 
-        print(self.actual_position)
+        # print(self.actual_position)
         best_param = -100000000000000000000 
         for direction in self.directions:
             next_position = self.get_position_from_direction(direction, self.actual_position)
-            print("next_position2: ", next_position)
+            # print("next_position2: ", next_position)
             if self.game.check_possible_move(self.actual_position, next_position):
                 param = self.learning_params.learning_values[next_position[0], next_position[1]] 
                 if best_param < param:
                     next_move = next_position
                     best_param = param
-        print("next_move3: ", next_move)
+        # print("next_move3: ", next_move)
         return next_move
 
     def go(self):
         if self.status == EscapistState.RUNNING:
             move = self.next_move()
-            print("go, move: ", move)
+            # print("go, move: ", move)
             self.positions_all_the_way.append(move)
             self.actual_position = move 
-            print(f'New position: {move}.')
+            # print(f'New position: {move}.')
             self.status = self.game.check_state_in_position(move)
 
             return True

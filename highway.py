@@ -1,6 +1,6 @@
 import numpy as np
 
-class Grid:
+class Highway:
     def __init__(self, start_pos, height=10, width=5):
         self.WIDTH = width
         self.HEIGHT = height
@@ -9,7 +9,7 @@ class Grid:
         self.lose_positions = self.lose_positions()
         self.blocked_positions = self.blocked_positions()
 
-        self.grid = np.zeros([self.HEIGHT, self.WIDTH])
+        self.road = np.zeros([self.HEIGHT, self.WIDTH])
         self.setup_grid()
 
     def reset(self):
@@ -24,10 +24,20 @@ class Grid:
         return positions 
 
     def lose_positions(self):
-        positions = [] 
+        positions = []
+        distances = []
+        w = self.WIDTH * 3//4
 
-        for i in range(1,4):
-            positions.append((5,i))
+        for level in range(2, self.HEIGHT-3, 2):
+            distances.append(int(w))
+            w += (w+w*np.random.rand())%self.WIDTH
+        
+        # print(distances)
+
+        for i, level in enumerate(range(2, self.HEIGHT-3, 2)):
+            for column in range(distances[i], int(distances[i]+self.WIDTH//3+2)):
+                positions.append((level, column%self.WIDTH))
+        # print("lose_positions: ", positions)
         
         return positions
 
@@ -38,17 +48,24 @@ class Grid:
 
         return positions
 
+    def update_lose_positions(self):
+        for lose_position in self.lose_positions:
+            self.road[lose_position] = 0
+
+        for lose_position in self.lose_positions:
+            self.road[lose_position[0], (lose_position[1]+1)%self.WIDTH] = -1
+
     def tick(self):
-        pass
+        self.update_lose_positions()
 
     def setup_grid(self):
-        self.grid = np.zeros([self.HEIGHT, self.WIDTH])
+        self.road = np.zeros([self.HEIGHT, self.WIDTH])
 
         for pos in self.win_positions:
-            self.grid[pos] = 1
+            self.road[pos] = 1
 
         for pos in self.lose_positions:
-            self.grid[pos] = -1
+            self.road[pos] = -1
 
     def check_possible_move(self, start_pos, end_pos):
         if abs(start_pos[0] - end_pos[0]) + abs(start_pos[1] - end_pos[1]) != 1:
@@ -63,4 +80,4 @@ class Grid:
         return True
 
     def show_grid(self):
-        print(self.grid)
+        print(self.road)

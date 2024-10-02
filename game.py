@@ -1,5 +1,6 @@
 import numpy as np 
 from grid import Grid
+from highway import Highway
 from escapist import Escapist, EscapistState
 
 class Escape:
@@ -12,7 +13,7 @@ class Escape:
         self.round_time_limit = time_limit_in_a_round
         self.start_position = (self.HEIGHT-1, 2)
 
-        self.grid = Grid(self.start_position, self.HEIGHT, self.WIDTH)
+        self.grid = Highway(self.start_position, self.HEIGHT, self.WIDTH)
         self.escapist = Escapist(self)
     
     def check_possible_move(self, start_pos, end_pos):
@@ -27,6 +28,7 @@ class Escape:
 
     def time_tick(self):
         self.time += 1
+        self.grid.tick()
         return self.escapist.go()
 
     def reset_round(self):
@@ -41,7 +43,7 @@ class Escape:
                     if self.time > self.round_time_limit:
                         break
 
-                print(f'Round {rnd} took {self.time} ticks.\n')
+                # print(f'Round {rnd} took {self.time} ticks.\n')
                 self.reset_round()
 
     def show_result(self):
